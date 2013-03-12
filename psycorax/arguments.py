@@ -57,11 +57,6 @@ def args_and_values():
                            metavar='[VERSION_NUM]',
                            default=os.getenv('OS_VERSION', 'v2.0'),
                            help='env[OS_VERSION]')
-    authgroup.add_argument('--use-http',
-                            action='store_true',
-                            default=None,
-                            help=('Forces the NOVA API to Use HTTP instead'
-                                  ' of HTTPS'))
     authgroup.add_argument('--os-verbose',
                             action='store_true',
                             default=None,
@@ -93,15 +88,6 @@ def args_and_values():
                                  ' within the instances, I will need an SSH'
                                  ' key. This is the path to the key file that'
                                  ' you would like to use.'))
-    optionals.add_argument('--error-retry',
-                           metavar='[ATTEMPTS]',
-                           type=int,
-                           default=5,
-                           help=('This option sets the number of attempts'
-                                 ' %(prog)s will attempt an operation'
-                                 ' before quiting. The default is 5. This'
-                                 ' is useful if you have a spotty network'
-                                 ' or ISP.'))
     optionals.add_argument('--time',
                            metavar='[time]',
                            type=int,
@@ -125,13 +111,6 @@ def args_and_values():
                            choices=['critical', 'warn', 'info', 'debug'],
                            default='info',
                            help=('Set the Log Level'))
-    optionals.add_argument('--system-config',
-                           metavar='[CONFIG-FILE]',
-                           type=str,
-                           default=None,
-                           help=('Path to your Configuration file. This is '
-                                 'an optional argument used to spec '
-                                 'credentials. File MUST use permissions'))
     optionals.add_argument('--start',
                            action='store_true',
                            help='Start The PsycoRax')
@@ -144,12 +123,6 @@ def args_and_values():
     optionals.add_argument('--status',
                            action='store_true',
                            help='Get the Status of The PsycoRax')
-    optionals.add_argument('--quiet',
-                           action='store_true',
-                           help='Make %(prog)s Shut the hell up')
-    optionals.add_argument('--verbose',
-                           action='store_true',
-                           help='Be verbose While Uploading')
     optionals.add_argument('--debug',
                            action='store_true',
                            help='Turn up verbosity to over 9000')
@@ -164,14 +137,14 @@ def args_and_values():
     # Parse the arguments
     args = parser.parse_args()
     set_args = vars(args)
-    set_args = check_parsed(set_args)
+    set_args = check_parsed(set_args, parser)
     if set_args:
         return set_args
     else:
         sys.exit(parser.print_help())
 
 
-def check_parsed(set_args):
+def check_parsed(set_args, parser):
     # Parse Config File
     #if set_args['system_config']:
     #    from turbolift.operations import systemconfig
@@ -204,7 +177,6 @@ def check_parsed(set_args):
 
     if set_args['debug']:
         set_args['os_verbose'] = True
-        set_args['verbose'] = True
         print('DEFAULT ARGUMENTS : %s\n' % (set_args))
 
     return set_args
