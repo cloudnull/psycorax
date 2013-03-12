@@ -29,6 +29,31 @@ Simple Use
     psycorax -u usename -a apikey --os-rax-auth dfw --start
 
 
+Functions of PsycoRax
+~~~~~~~~~~~~~~~~~~~~~
+
+API Functions:
+    * nuke : Delete an Instance 
+    * reboot : Reboots an Instance
+    * resize : Resizes an instance to a random size, then either revert it or nuke it
+
+
+Fabric Functions:
+    * shutdown : From within the instance, it is shutoff
+    * reboot : Issue reboot now from within an instance
+    * dd_create_load : Use DD to create load on the box
+    * dd_the_root : Use DD to corrupt the file system
+    * sort_devurandom : Case Load by attempting to uniquely sort /dev/urandom
+    * network_offline : Disable networking
+    * rm_rm_slash : Delete Everything
+    * restart_apache : Look for Apache, if found restart it, if not found restart the instance.
+    * stop_apache : Look for Apache, if found stop it, if not found shut the instance down.
+    * restart_mysql : Look for MySQL, if found restart it, if not found restart the instance.
+    * stop_mysql : Look for MySQL, if found stop it, if not found shut the instance down.
+    * restart_nginx : Look for NGINX, if found restart it, if not found restart the instance.
+    * stop_nginx : Look for NGINX, if found stop it, if not found shut the instance down.
+
+
 Notes
 -----
 
