@@ -1,7 +1,1 @@
-You need to install : pip, setuptools, openssl, and libssl-dev
-
-because Oracle is can be a Bag of dicks, you may need to download the connector
-manually.here is a URL for the Connector :
-http://dev.mysql.com/get/Downloads/Connector-Python/mysql-connector-python-1.0.9.tar.gz
-
 Using debug mode can cause Error 5 if using it with a bazillion operations.
