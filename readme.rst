@@ -16,7 +16,6 @@ Overview
 --------
 
 PsycoRax is random, and unpredictable but manageable :
-
     The PsycoRax system runs as a python based Full UNIX daemon conforming to PEP4134. The application will pull instances from the Openstack Servers list, validate they are in an "ACTIVE" state and then ensure they are tagged as being available for testing. The tag system employed is a simple Metadata tag *"ameba_managed"* which is added to an instance. If the system detects the TAG it will then ensure that the instance has no Pending task state.
 
 
