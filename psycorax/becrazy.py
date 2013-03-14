@@ -123,21 +123,27 @@ class Crazyness(object):
         attack_procs = []
         # pick our vic
         node_count = len(nodes)
-        if node_count == 0:
-            raise NothingToMessWith('Due to having a "%s" node count,'
-                                    ' I have nothing to do.' % node_count)
-        if self.m_args['cc_attack'] <= 0:
-            if node_count == 1:
+        try:
+            if node_count == 0:
+                raise NothingToMessWith('Due to having a "%s" node count,'
+                                        ' I have nothing to do.' % node_count)
+            elif self.m_args['cc_attack'] <= 0:
+                if node_count == 1:
+                    num_nodes = 1
+                else:
+                    num_nodes = random.randrange(1, node_count)
+            elif self.m_args['cc_attack'] == 1:
                 num_nodes = 1
             else:
-                num_nodes = random.randrange(1, node_count)
-        elif self.m_args['cc_attack'] == 1:
-            num_nodes = 1
-        else:
-            if self.m_args['cc_attack'] > node_count:
-                self.m_args['cc_attack'] = node_count
-            num_nodes = random.randrange(1, self.m_args['cc_attack'])
+                if self.m_args['cc_attack'] > node_count:
+                    self.m_args['cc_attack'] = node_count
+                num_nodes = random.randrange(1, self.m_args['cc_attack'])
+            # Attack what I know to attack
+            self.domer(nodes, num_nodes, attacks, attack_procs)
+        except NothingToMessWith:
+            self.log.info('I have nothing to do at this time...')
 
+    def domer(self, nodes, num_nodes, attacks, attack_procs):
         self.log.info('Picking "%s" Lucky Nodes' % num_nodes)
         lucky_ones = random.sample(nodes, num_nodes)
         # pick our method for pain
