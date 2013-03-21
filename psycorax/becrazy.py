@@ -142,6 +142,10 @@ class Crazyness(object):
             self.domer(nodes, num_nodes, attacks, attack_procs)
         except NothingToMessWith:
             self.log.info('I have nothing to do at this time...')
+        except ValueError:
+            self.log.info('Error Deciding on Target Nodes.'
+                          ' Values are : %s, %s' % (self.m_args['cc_attack'],
+                                                    node_count))
 
     def domer(self, nodes, num_nodes, attacks, attack_procs):
         self.log.info('Picking "%s" Lucky Nodes' % num_nodes)
