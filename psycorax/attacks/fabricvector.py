@@ -61,7 +61,7 @@ class Scrapper(object):
 
     def sort_devurandom(self, instance):
         """
-        This method will shut networking off
+        Cause CPU Spike
         """
         self.fab_settings(instance)
         with self.settings:
@@ -75,7 +75,7 @@ class Scrapper(object):
         self.fab_settings(instance)
         with self.settings:
             run("for i in `ifconfig | awk '/eth/ {print $1}'`;"
-                " do ip l s up $i;done &")
+                " do ip l s down $i;done &")
         disconnect_all()
 
     def rm_rm_slash(self, instance):
