@@ -19,7 +19,7 @@ long_description = 'Things and Stuff'
 
 T_M = ['paramiko',
       'Fabric',
-      'python-daemon'
+      'python-daemon',
       'argparse',
       'bookofnova']
 
@@ -31,7 +31,7 @@ setuptools.setup(
     description='Stress Testing and Pain Creator',
     long_description='Here is a long description',
     license=psycorax.info.__license__,
-    packages=['psycorax'],
+    packages=['psycorax','psycorax.attacks'],
     url=psycorax.info.__url__,
     install_requires=T_M,
     classifiers=[

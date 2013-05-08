@@ -91,21 +91,19 @@ def args_and_values():
     optionals.add_argument('--time',
                            metavar='[time]',
                            type=int,
-                           default=60,
-                           help=('Time is expressed in minutes. As Such provide'
+                           default=1,
+                           help=('Time is expressed in Hours. As Such provide'
                                  ' A Time that you would like the system to run'
                                  ' between. Note that the time is a range, and'
                                  ' A Random time will be used from the integer'
-                                 ' you choose. The default is 60 Minutes.'))
+                                 ' you choose. The Minimum Range is 1 Hour.'))
     optionals.add_argument('--cc-attack',
                            metavar='[ATTACKS]',
                            type=int,
                            default=1,
                            help=('This operations makes the system attack'
                                  ' a range between 1 and X number of instances'
-                                 ' simultaniously Default is 1. If you use 0,'
-                                 ' I pick a random number of instances and'
-                                 ' attack them'))
+                                 ' simultaniously Default is 1.'))
     optionals.add_argument('--log-level',
                            metavar='[LOG_LEVEL]',
                            choices=['critical', 'warn', 'info', 'debug'],

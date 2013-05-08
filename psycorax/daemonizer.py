@@ -96,10 +96,10 @@ class DaemonDispatch(object):
         # Set the start time of the Application
         self.log.info('%s is Entering Daemon Mode' % info.__appname__)
         try:
-            if self.p_args['time'] <= 0:
+            if self.p_args['time'] <= 1:
                 self.p_args['time'] = 1
-            sleepy = random.randrange(0, self.p_args['time']) + 1
-            sleeper = sleepy * 60
+            sleepy = random.randrange(0, self.p_args['time'])
+            sleeper = sleepy * 60 * 60
             # Run the PsycoRAX Application
             self.psyco = becrazy.Crazyness(m_args=self.p_args,
                                            output=self.log)

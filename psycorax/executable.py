@@ -10,7 +10,7 @@ from psycorax import arguments
 from psycorax import daemonizer, logger
 
 
-def run_mon_psycorax():
+def run_psycorax():
     """
     Basic Method for starting the application from the launcher
     """
