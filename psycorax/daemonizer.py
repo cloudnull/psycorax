@@ -99,18 +99,18 @@ class DaemonDispatch(object):
         try:
             me_sleep = int(self.p_args['time'])
             if me_sleep < 1:
-                self.p_args['time'] = 1 * 60 * 60
+                sleeper = 1 * 60 * 60
             else:
-                sleepy = random.randrange(1, me_sleep, 30)
-            sleeper = sleepy * 60
+                sleeper = random.randrange(1, (me_sleep * 60), 30)
             # Run the PsycoRAX Application
             self.psyco = becrazy.Crazyness(m_args=self.p_args,
                                            output=self.log)
             self.system = True
             while self.system:
+                time.sleep(sleeper)
                 self.psyco.authenticate()
                 self.psyco.crazy_man()
-                time.sleep(sleeper)
+
         except Exception, exp:
             self.log.critical(traceback.format_exc())
             self.log.critical(exp)

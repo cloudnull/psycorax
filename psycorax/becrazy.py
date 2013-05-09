@@ -139,7 +139,7 @@ class Crazyness(object):
         except ValueError:
             self.log.info('Error Deciding on Target Nodes.'
                           ' Values are : %s, %s' % (self.m_args['cc_attack'],
-                                                    node_count))
+                                                    num_nodes))
         except NothingToMessWith:
             self.log.info('No Instaces were found to Play with.'
                           ' So Nothing to do...')
