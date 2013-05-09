@@ -38,7 +38,7 @@ class Crazyness(object):
         self.nova = computelib.NovaCommands(m_args=self.m_args,
                                             output=self.log)
 
-    def record_actions(self, action, test=False):
+    def record_actions(self, action, test):
         today = self.now.strftime("%Y%m%d")
         _db = shelve.open(self.m_args['db_file'], writeback=True)
         action['testing'] = test
