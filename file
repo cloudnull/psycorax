@@ -1,3 +1,0 @@
-root     13155  1.0  0.4  87896 17072 ?        S    05:56   0:00 python /home/kevin/ams/bin/amebaserver.local.py --system-config /etc/ameba/config.cfg --restart
-root     13158  0.0  0.3 235184 14876 ?        Sl   05:56   0:00  \_ python /home/kevin/ams/bin/amebaserver.local.py --system-config /etc/ameba/config.cfg --restart
-root     13166  0.1  0.4  88416 16332 ?        S    05:56   0:00  \_ python /home/kevin/ams/bin/amebaserver.local.py --system-config /etc/ameba/config.cfg --restart
