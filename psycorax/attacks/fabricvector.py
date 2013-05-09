@@ -34,12 +34,17 @@ class Scrapper(object):
                                 "if [ -f '/etc/init.d/nginx' ]; then"
                                 " /etc/init.d/nginx stop;"
                                 "fi")}
-        self.attack = random.choice(_av.items())
+        self.vector = _av
+
+    def fab_data(self):
+        self.attack_name, self.attack = random.choice(self.vector.items())
+        return self.attack_name
 
     def fab_settings(self, instance):
         for addr in instance['addresses']['public']:
             if addr['version'] == 4:
                 ip_addr = addr['addr']
+        self.output.debug(ip_addr)
         self.settings = settings(warn_only=True,
                               linewise=True,
                               keepalive=5,
