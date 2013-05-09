@@ -18,10 +18,11 @@ if sys.version_info < (2, 6, 0):
 long_description = 'Things and Stuff'
 
 T_M = ['paramiko',
-      'Fabric',
-      'python-daemon',
-      'argparse',
-      'bookofnova']
+       'Fabric',
+       'python-daemon',
+       'argparse',
+       'bookofnova',
+       'prettytable']
 
 setuptools.setup(
     name=psycorax.info.__appname__,
