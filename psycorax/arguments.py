@@ -1,7 +1,7 @@
 import argparse
 import sys
 import os
-
+import tempfile
 from psycorax import info
 
 
@@ -17,6 +17,8 @@ def args_and_values():
                      ' Infrastructure Stress Tester'),
         epilog=info.VINFO)
 
+    subparser = parser.add_subparsers(title='Attack System and Destructivizer',
+                                      metavar='<Commands>\n')
     # Setup for the positional Arguments
     authgroup = parser.add_argument_group('Authentication', 'Authentication'
                                           ' against the OpenStack API')
@@ -25,6 +27,16 @@ def args_and_values():
                                           ' operation')
 
     # Base Authentication Argument Set
+    reportact = argparse.ArgumentParser(add_help=False)
+    reportact.add_argument('--date',
+                        help=('Show a report from a specific day'
+                              ' on %(prog)s actions'))
+    reportact.add_argument('--all',
+                        action='store_true',
+                        help=('Show a report for all'
+                              ' %(prog)s actions'))
+
+    authgroup = argparse.ArgumentParser(add_help=False)
     authgroup.add_argument('-u',
                            '--os-user',
                            metavar='[USERNAME]',
@@ -91,12 +103,12 @@ def args_and_values():
     optionals.add_argument('--time',
                            metavar='[time]',
                            type=int,
-                           default=1,
-                           help=('Time is expressed in Hours. As Such provide'
+                           default=60,
+                           help=('Time is expressed in Minutes. As Such provide'
                                  ' A Time that you would like the system to run'
                                  ' between. Note that the time is a range, and'
                                  ' A Random time will be used from the integer'
-                                 ' you choose. The Minimum Range is 1 Hour.'))
+                                 ' you choose. The Minimum Range is 1 minute.'))
     optionals.add_argument('--cc-attack',
                            metavar='[ATTACKS]',
                            type=int,
@@ -128,6 +140,21 @@ def args_and_values():
                            action='version',
                            version=info.V_N)
 
+    # All of the positional Arguments
+    reportact = subparser.add_parser('report',
+                                     parents=[reportact],
+                                     help=('show a report on what %(prog)s'
+                                        ' has been up to and all the things that'
+                                        ' we have broken and or attacked'))
+    reportact.set_defaults(report=True,
+                           attack=None)
+
+    attackact = subparser.add_parser('attack',
+                                     parents=[authgroup],
+                                     help=('Run the attack Methods.'))
+    attackact.set_defaults(report=None,
+                           attack=True)
+
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit('Give me something to do and I will do it')
@@ -148,33 +175,50 @@ def check_parsed(set_args, parser):
     #    from turbolift.operations import systemconfig
     #    set_args = systemconfig.ConfigureationSetup(set_args).config_args()
 
-    # Interperate the Parsed Arguments
-    if set_args['os_region']:
-        set_args['os_region'] = set_args['os_region'].upper()
+    root = '/var/lib'
+    if os.path.isdir(root):
+        dbdir = '%s/psyco' % root
+        if os.path.isdir(dbdir):
+            set_args['db_file'] = '%s/%s.dbm' % (dbdir, info.__appname__)
+        else:
+            os.mkdir(dbdir)
+            set_args['db_file'] = '%s/%s.dbm' % (dbdir, info.__appname__)
+    else:
+        set_args['db_file'] = '%s%s%s.dbm' % (tempfile.gettempdir(),
+                                              os.sep,
+                                              info.__appname__)
+    set_args['time'] = (set_args['time'] * 60)
+    if not set_args['report']:
+        # Interperate the Parsed Arguments
+        if set_args['os_region']:
+            set_args['os_region'] = set_args['os_region'].upper()
 
-    if set_args['os_rax_auth']:
-        set_args['os_rax_auth'] = set_args['os_rax_auth'].upper()
+        if set_args['os_rax_auth']:
+            set_args['os_rax_auth'] = set_args['os_rax_auth'].upper()
 
-    if not set_args['os_user']:
-        print('\nNo Username was provided, use [--os-user]\n')
-        return False
+        if not set_args['os_user']:
+            print('\nNo Username was provided, use [--os-user]\n')
+            return False
 
-    if not (set_args['os_apikey'] or set_args['os_password']):
-        parser.print_help()
-        print('\nNo API Key or Password was provided, use [--os-apikey]\n')
-        return False
+        if not (set_args['os_apikey'] or set_args['os_password']):
+            parser.print_help()
+            print('\nNo API Key or Password was provided, use [--os-apikey]\n')
+            return False
 
-    if set_args['os_apikey']:
-        set_args['os_password'] = set_args['os_apikey']
+        if set_args['os_apikey']:
+            set_args['os_password'] = set_args['os_apikey']
 
-    if set_args['os_rax_auth'] and set_args['os_region']:
-        parser.print_help()
-        print('You can\'t use both [--os-rax-auth] and'
-              ' [--os-region] in the same command, so I quit...\n')
-        return False
+        if set_args['os_rax_auth'] and set_args['os_region']:
+            parser.print_help()
+            print('You can\'t use both [--os-rax-auth] and'
+                  ' [--os-region] in the same command, so I quit...\n')
+            return False
 
-    if set_args['debug']:
-        set_args['os_verbose'] = True
-        print('DEFAULT ARGUMENTS : %s\n' % (set_args))
+        if set_args['debug']:
+            set_args['os_verbose'] = True
+            print('DEFAULT ARGUMENTS : %s\n' % (set_args))
+    else:
+        if not os.path.isfile(set_args['db_file']):
+            sys.exit('No Database File Found')
 
     return set_args

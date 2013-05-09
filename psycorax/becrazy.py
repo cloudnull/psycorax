@@ -6,7 +6,7 @@ import tempfile
 import os
 
 # Import bookofnova
-from bookofnova import authentication, computelib
+from bookofnova import computelib
 
 # Local Imports
 from psycorax import info, generators
@@ -27,9 +27,7 @@ class Crazyness(object):
         Credentials to get started.
         """
         self.now = datetime.datetime.now()
-        self.db_file = '%s%s%s.dbm' % (tempfile.gettempdir(),
-                                       os.sep,
-                                       info.__appname__)
+
         # Set Initial Arguments
         self.m_args = m_args
 
@@ -39,31 +37,11 @@ class Crazyness(object):
         # Prep Nova For Use
         self.nova = computelib.NovaCommands(m_args=self.m_args,
                                             output=self.log)
-    def show_report(self, date=None):
-        _db = shelve.open(self.db_file, flag='r')
-        if date:
-            if date in _db:
-                print('REPORT FOR "%s"\t:' % date)
-                for inst in _db[date]:
-                    msg = ('Instance UUID => "%s"\n'
-                           'Attack vector ==> "%s"\n'
-                           'Time ==> "%s"' % inst)
-                    print msg
-            else:
-                print('%s not found in DB' % date)
-        else:
-            for day in _db.keys():
-                print('REPORT FOR "%s"\t:' % day)
-                for inst in _db[day]:
-                    msg = ('Instance UUID => "%s"\n'
-                           'Attack vector ==> "%s"\n'
-                           'Time ==> "%s"' % inst)
-                    print msg
-        _db.close()
 
-    def record_actions(self, action):
-        today = self.now.strftime("%Y%m%d-%H%M")
-        _db = shelve.open(self.db_file, writeback=True)
+    def record_actions(self, action, test=False):
+        today = self.now.strftime("%Y%m%d")
+        _db = shelve.open(self.m_args['db_file'], writeback=True)
+        action['testing'] = test
         if not today in _db:
             _db[today] = []
             _db[today].append(action)
@@ -125,8 +103,9 @@ class Crazyness(object):
                 psyco_path.update({'API_%s' % str(opt): opt_b[1]})
 
         if self.m_args['ssh_key']:
-            fabs = fabricvector.Scrapper(self.m_args)
-            psyco_path.update({'FAB': fabs.run_attack})
+            fabs = fabricvector.Scrapper(self.m_args, output=self.log)
+            fab_name = fabs.fab_data()
+            psyco_path.update({'FAB_%s' % fab_name: fabs.run_attack})
         self.log.info('Packing my tool bag')
         return psyco_path
 
@@ -138,44 +117,34 @@ class Crazyness(object):
         try:
             if nodes:
                 num_nodes = len(nodes)
-                self.log.info('We discovered "%s" that will be played with'
+                self.log.info('We discovered "%s" that we can play with'
                               % num_nodes)
+                attacks = self.destructivizer()
+
+                if self.m_args['cc_attack'] <= 1:
+                    self.m_args['cc_attack'] = 1
+                elif self.m_args['cc_attack'] > num_nodes:
+                    self.m_args['cc_attack'] = num_nodes
+
+                if self.m_args['cc_attack'] >= 2:
+                    num_nodes = random.randrange(1, self.m_args['cc_attack'])
+                else:
+                    num_nodes = 1
+
+                self.domer(nodes, num_nodes, attacks)
             else:
                 raise NothingToMessWith
-        except NothingToMessWith:
-            self.log.info('No Instaces were found to Play with.'
-                          ' So Nothing to do...')
-
-        attacks = self.destructivizer()
-        # Set a list of all of the processes which we are working on
-        attack_procs = []
-
-        # pick our vic
-        node_count = len(nodes)
-        try:
-            if node_count == 0:
-                raise NothingToMessWith('Due to having a "%s" node count,'
-                                        ' I have nothing to do.' % node_count)
-            elif self.m_args['cc_attack'] <= 1:
-                if node_count == 1:
-                    num_nodes = 1
-                else:
-                    num_nodes = random.randrange(0, node_count)
-            elif self.m_args['cc_attack'] == 1:
-                num_nodes = 1
-            else:
-                if self.m_args['cc_attack'] > node_count:
-                    self.m_args['cc_attack'] = node_count
-                num_nodes = random.randrange(1, self.m_args['cc_attack'])
-            self.domer(nodes, num_nodes, attacks, attack_procs)
         except NothingToMessWith:
             self.log.info('I have nothing to do at this time...')
         except ValueError:
             self.log.info('Error Deciding on Target Nodes.'
                           ' Values are : %s, %s' % (self.m_args['cc_attack'],
                                                     node_count))
+        except NothingToMessWith:
+            self.log.info('No Instaces were found to Play with.'
+                          ' So Nothing to do...')
 
-    def domer(self, nodes, num_nodes, attacks, attack_procs):
+    def domer(self, nodes, num_nodes, attacks):
         self.log.info('Picking "%s" Lucky Nodes' % num_nodes)
         lucky_ones = random.sample(nodes, num_nodes)
         # pick our method for pain
@@ -187,14 +156,15 @@ class Crazyness(object):
                 if self.m_args['os_verbose']:
                     self.log.info(self.m_args)
                     self.log.info(node)
-                inst_info = (node['id'],
-                             destructive,
-                             self.now.strftime("%Y%m%d-%H%M%S"))
-                msg = ('Instance UUID => "%s"\n'
-                       'Attack vector ==> "%s"\n'
-                       'Time ==> "%s"'
+                inst_info = {'node': node['id'],
+                             'method': destructive,
+                             'time': self.now.strftime("%H%M%S")}
+                msg = ('Instance UUID => "%(node)s"'
+                       ' Attack vector ==> "%(method)s"'
+                       ' Time ==> "%(time)s"'
                        % inst_info)
-                self.record_actions(action=inst_info)
+                self.record_actions(action=inst_info,
+                                    test=self.m_args['test'])
                 self.log.warn(msg)
                 task = (method, node)
                 vectors.append(task)
@@ -209,5 +179,3 @@ class Crazyness(object):
                     self.log.info(msg)
         except Exception:
             self.log.critical(traceback.format_exc())
-        finally:
-            del attack_procs
