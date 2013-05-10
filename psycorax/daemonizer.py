@@ -101,16 +101,18 @@ class DaemonDispatch(object):
         # Set the start time of the Application
         self.log.info('%s is Entering Daemon Mode' % info.__appname__)
         try:
-            me_sleep = int(self.p_args['time'])
-            if me_sleep < 1:
-                sleeper = 1 * 60 * 60
-            else:
-                sleeper = random.randrange(1, (me_sleep * 60), 30)
             # Run the PsycoRAX Application
             self.psyco = becrazy.Crazyness(m_args=self.p_args,
                                            output=self.log)
             self.system = True
+            me_sleep = self.p_args['time']
+            interval = int(me_sleep * .25)
             while self.system:
+                if me_sleep < 1:
+                    sleeper = 1 * 60 * 60
+                else:
+                    sleeper = random.randrange(1, (me_sleep * 60), interval)
+                self.log.info('NOTICE:\tNext Attack in "%s" Seconds' % sleeper)
                 time.sleep(sleeper)
                 self.psyco.authenticate()
                 self.psyco.crazy_man()
