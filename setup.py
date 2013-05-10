@@ -58,14 +58,15 @@ def config_files_setup():
     name = 'config.cfg'
     path = '/etc/%s' % info.__appname__
     full = '%s%s%s' % (path, os.sep, name)
+    conf_file = strings.config_file % {'full_path': full}
     if not os.path.isdir(path):
         os.mkdir(path)
         with open(full, 'w+') as conf_f:
-            conf_f.write(strings.config_file)
+            conf_f.write(conf_file)
     else:
         if not os.path.isfile(full):
             with open(full, 'w+') as conf_f:
-                conf_f.write(strings.config_file)
+                conf_f.write(conf_file)
         else:
             print('Their was a configuration file found, I am compressing the '
                   'old version and will place the new one on the system.')
