@@ -24,7 +24,7 @@ class Crazyness(object):
         Prep the Crazy man to do things.  This requires an openstack set of
         Credentials to get started.
         """
-        self.now = datetime.datetime.now()
+        self.now = datetime.datetime.utcnow()
 
         # Set Initial Arguments
         self.m_args = m_args
@@ -156,7 +156,7 @@ class Crazyness(object):
                     self.log.debug(node)
                 inst_info = {'node': node['id'],
                              'method': destructive,
-                             'time': self.now.strftime("%H%M%S")}
+                             'time': self.now.strftime("%H:%M:%S UTC")}
                 msg = ('Instance UUID => "%(node)s"'
                        ' Attack vector ==> "%(method)s"'
                        ' Time ==> "%(time)s"'
