@@ -111,7 +111,7 @@ class DaemonDispatch(object):
                                            output=self.log)
             self.system = True
             while self.system:
-                time.sleep(5)
+                time.sleep(sleeper)
                 self.psyco.authenticate()
                 self.psyco.crazy_man()
 
