@@ -191,7 +191,7 @@ def check_parsed(set_args, parser):
         set_args['db_file'] = '%s%s%s.dbm' % (tempfile.gettempdir(),
                                               os.sep,
                                               info.__appname__)
-    set_args['time'] = (set_args['time'] * 60)
+    set_args['time'] = (int(set_args['time']) * 60)
     if not set_args['report']:
         # Interperate the Parsed Arguments
         if set_args['os_region']:
