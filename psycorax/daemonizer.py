@@ -116,8 +116,6 @@ class DaemonDispatch(object):
             self.log.critical(exp)
 
 
-
-
 class DaemonINIT(object):
     def __init__(self, p_args, output, handler):
         # Bless the daemon dispatch class
