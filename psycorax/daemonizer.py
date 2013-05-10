@@ -16,6 +16,10 @@ import random
 from psycorax import info, becrazy
 
 
+class NoLogLevelSet(Exception):
+    pass
+
+
 class CloudNotStopSystem(Exception):
     pass
 
@@ -107,7 +111,7 @@ class DaemonDispatch(object):
                                            output=self.log)
             self.system = True
             while self.system:
-                time.sleep(sleeper)
+                time.sleep(5)
                 self.psyco.authenticate()
                 self.psyco.crazy_man()
 
@@ -229,14 +233,25 @@ class DaemonINIT(object):
             print('\n'.join(self.daemon_status()))
 
 
-def logger_setup():
+def logger_setup(log_level='info'):
     """
     Setup logging for your application
     """
     logger = logging.getLogger("%s Logging" % info.__appname__)
 
     # Log Level Arguments
-    logger.setLevel(logging.DEBUG)
+    if log_level.upper() == 'DEBUG':
+        logger.setLevel(logging.DEBUG)
+    elif log_level.upper() == 'INFO':
+        logger.setLevel(logging.INFO)
+    elif log_level.upper() == 'WARN':
+        logger.setLevel(logging.WARN)
+    elif log_level.upper() == 'ERROR':
+        logger.setLevel(logging.ERROR)
+    else:
+        raise NoLogLevelSet('I died because you did not set the log level in'
+                            ' your arguments. Heres what was set %s'
+                            % log_level)
 
     # Set Formatting
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s"
@@ -292,7 +307,7 @@ def daemon_args(p_args):
     * "debug_mode" SHOULD NOT BE USED FOR NORMAL OPERATION! and can cause
       "error 5" over time
     """
-    logger, handler = logger_setup()
+    logger, handler = logger_setup(log_level=p_args['log_level'])
 
     # Bless the Daemon Setup / INIT class
     d_i = DaemonINIT(p_args=p_args,
