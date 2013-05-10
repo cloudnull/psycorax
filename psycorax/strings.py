@@ -5,7 +5,7 @@ config_file = """
 # Section names don't matter, however they are nice for oganizing data
 # This is a sample file not all variables are needed. Use what you want too.
 
-# Place me in "%(full_path)s" with permissions "0600" or "0400"
+# Place me in %(full_path)s with permissions "0600" or "0400"
 
 # Note: Not all variables are needed, simply use what you need to. If you give
 # the system mail relay information you will get notices when images are

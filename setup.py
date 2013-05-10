@@ -76,7 +76,7 @@ def config_files_setup():
             tar.add(full)
             tar.close()
             with open(full, 'w+') as conf_f:
-                conf_f.write(strings.config_file)
+                conf_f.write(conf_file)
     if os.path.isfile(full):
         os.chmod(full, 0600)
     print('Configuration file is ready.  Please set your credentials in : %s'
