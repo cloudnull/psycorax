@@ -2,7 +2,7 @@ import argparse
 import sys
 import os
 import tempfile
-from psycorax import info
+from psycorax import info, systemconfig
 
 
 def args_and_values():
@@ -76,9 +76,14 @@ def args_and_values():
                                   ' Verbose'))
 
     # Optional Aguments
+    optionals.add_argument('--system-config',
+                           type=str,
+                           metavar='[Path]',
+                           default=None,
+                           help=('Uses a System Config File, for all options'))
     optionals.add_argument('--test',
                             action='store_true',
-                            default=None,
+                            default=False,
                             help=('Does Nothing to anything, just performs a'
                                   ' simple run test as if we were going to'
                                   ' attack our environment'))
@@ -171,9 +176,8 @@ def args_and_values():
 
 def check_parsed(set_args, parser):
     # Parse Config File
-    #if set_args['system_config']:
-    #    from turbolift.operations import systemconfig
-    #    set_args = systemconfig.ConfigureationSetup(set_args).config_args()
+    if set_args['system_config']:
+        set_args = (systemconfig.ConfigureationSetup(set_args).config_args())
 
     root = '/var/lib'
     if os.path.isdir(root):
