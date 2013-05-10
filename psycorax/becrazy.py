@@ -2,14 +2,12 @@ import traceback
 import random
 import shelve
 import datetime
-import tempfile
-import os
 
 # Import bookofnova
 from bookofnova import computelib
 
 # Local Imports
-from psycorax import info, generators
+from psycorax import generators
 
 
 class NotAuthenticated(Exception):
@@ -154,8 +152,8 @@ class Crazyness(object):
                 destructive = random.choice(attacks.keys())
                 method = attacks[destructive]
                 if self.m_args['os_verbose']:
-                    self.log.info(self.m_args)
-                    self.log.info(node)
+                    self.log.debug(self.m_args)
+                    self.log.debug(node)
                 inst_info = {'node': node['id'],
                              'method': destructive,
                              'time': self.now.strftime("%H%M%S")}
