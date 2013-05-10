@@ -107,6 +107,8 @@ class DaemonDispatch(object):
             self.system = True
             me_sleep = self.p_args['time']
             interval = int(me_sleep * .25)
+            if interval < 1:
+                interval = 1
             while self.system:
                 if me_sleep < 1:
                     sleeper = 1 * 60 * 60
