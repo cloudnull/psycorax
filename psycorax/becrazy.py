@@ -24,8 +24,6 @@ class Crazyness(object):
         Prep the Crazy man to do things.  This requires an openstack set of
         Credentials to get started.
         """
-        self.now = datetime.datetime.utcnow()
-
         # Set Initial Arguments
         self.m_args = m_args
 
@@ -37,7 +35,8 @@ class Crazyness(object):
                                             output=self.log)
 
     def record_actions(self, action, test):
-        today = self.now.strftime("%Y%m%d")
+        now = datetime.datetime.utcnow()
+        today = now.strftime("%Y%m%d")
         _db = shelve.open(self.m_args['db_file'], writeback=True)
         action['testing'] = test
         if not today in _db:
@@ -154,9 +153,10 @@ class Crazyness(object):
                 if self.m_args['os_verbose']:
                     self.log.debug(self.m_args)
                     self.log.debug(node)
+                now = datetime.datetime.utcnow()
                 inst_info = {'node': node['id'],
                              'method': destructive,
-                             'time': self.now.strftime("%H:%M:%S UTC")}
+                             'time': now.strftime("%H:%M:%S UTC")}
                 msg = ('Instance UUID => "%(node)s"'
                        ' Attack vector ==> "%(method)s"'
                        ' Time ==> "%(time)s"'
